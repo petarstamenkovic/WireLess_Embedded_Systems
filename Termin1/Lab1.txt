@@ -1,0 +1,15 @@
+Umrezeni embeded sistemi - Laboratorijske vezbe 1 - 28.2.2024.
+*Postoji praktikum iz UES 1052 
+Teze sa vezbi
+
+MCU je ESP32 - 1 core standardni i 1 ULP (Ultra low power)
+Radi na 868MHz sa dosta rezima rada.
+Ima integrisan Bt i WiFi na 2.4GHz.
+V2 je konektor za antenu. 
+Antena treba da bude dugacka lambda/4.
+LoRa(Long range) radio.
+
+SPI Flash od 8Mb - moguce paritcionisanje. Ovde se skladisti programska memorija. 
+
+Toolchainovi 1)Espressif
+	     2)Arduino IDE

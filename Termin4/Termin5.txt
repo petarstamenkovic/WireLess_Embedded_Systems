@@ -1,0 +1,23 @@
+Termin 5 - UES
+
+Uloga esp32 je sad kao klijentski uredjaj.
+
+Pr1. wifiMulti.addAp -> ubaci wifi podatke.
+
+Parametri mogu biti ugradjeni u URL.
+
+Kako ekstrakovati nama korisne informacije iz jsona?
+
+Serijalizacija - nesto ide u json 
+Deserijalizacija - parsiranje iz jsona
+
+OpenWeather key 4d1c95491acede42fa79ef1709a4237c
+
+profesor key c5d32a3622a064c913548125fb9f6cc5
+
+Other featuers - Geocoding
+
+Preetyfying tool 0- Json lint
+
+https://api.openweathermap.org/data/2.5/weather?q=Novi%20Sad&appid=c5d32a3622a064c913548125fb9f6cc5&units=metric
+(units metric for celsius)

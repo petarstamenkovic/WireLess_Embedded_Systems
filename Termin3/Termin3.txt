@@ -1,0 +1,14 @@
+Laboratorijske vezbe 3 - UES 
+
+ESP kao WebServer
+
+Dva rezima : 
+	1) Station SPA mode 
+	2) Soft Access Point (AP) mode ---> Ad Hoc konektovanje
+
+Konfiguracija uredjaja u 2 i prebacivanje u 1 gde on koristi tudju mrezu onda.
+
+
+Funkcija procesor menja %string% unutar html fajla. (gledaj index.html). 
+Ovim pristupom imamo html i css fajlove unutar fajl sistema, a u samom .ino codu (source) se nalazi nas c/c++ kod.
+Ovo je daleko elegantniji nacin.

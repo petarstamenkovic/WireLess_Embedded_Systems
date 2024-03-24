@@ -34,6 +34,11 @@ void setup(){
   }
   Serial.println("");
   Serial.println("WiFi connected.");
+
+  // Init and OLED
+  Heltec.begin(true,false,false);
+  Heltec.display->flipScreenVertically();
+  Heltec.display->setFont(ArialMT_Plain_10);
   
   // Init and get the time
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
@@ -85,14 +90,6 @@ void printLocalTime(){
   char curr_time[9];
   sprintf(curr_time, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
-/*
-  int hrs = timeinfo.tm_hour;
-  int mins = timeinfo.tm_min;
-  int secs = timeinfo.tm_sec;
-  curr_time = String(hrs) + ":" + String(mins) + ":" + String(secs);
-
-*/
-
   Heltec.display->clear();
   Heltec.display->setFont(ArialMT_Plain_10);
   Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
@@ -106,4 +103,3 @@ void printLocalTime(){
   
   Serial.println();
 }
-

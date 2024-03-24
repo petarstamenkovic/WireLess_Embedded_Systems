@@ -1,0 +1,21 @@
+Umrezeni embeded sistemi - Termin 2 - Laboratorijske vezbe 
+
+Rezim spavanja! - Kljucno zbog baterijskog napajanja.
+Ideja ovih lp rezima je da se neke komponente po potrebi gase!
+
+Tx - transmit rezim -> nesto se salje ka necemu (najveca potrosnja) 
+Rx - recieve rezim -> nesto se prihvata
+dBm - dB po vati
+
+Proracun potrosnje
+P[dBm] = 10log(P/1mW)
+
+Modem sleep mode - Moze da se odrzi konekcija(DTIM beacon mehanizam)
+
+RTC modul ima svoju memoriju (8kb) - ova memorija se cuva sve vreme, pa i pri gasenju modula(reset uredjaja)
+
+Hiberantion mode - I RTC memorija gubi svoj sadrzaj pri resetovanju procesora.
+
+RTC_DATA_ATTR in cnt = 0; => promenljiva cnt je smestena u RTC memoriju
+
+UTC - univerzalno vreme - casovne zone - GMT , mi smo GMT+1 / GMT+2  (Y2K bag*)
