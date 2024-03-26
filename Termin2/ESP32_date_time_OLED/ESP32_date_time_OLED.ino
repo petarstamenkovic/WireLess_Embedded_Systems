@@ -1,10 +1,10 @@
 /*
   Rui Santos
   Complete project details at https://RandomNerdTutorials.com/esp32-date-time-ntp-client-server-arduino/
-  
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files.
-  
+
   The above copyright notice and this permission notice shall be included in all
   copies or substantial portions of the Software.
 */
@@ -13,6 +13,7 @@
 #include "time.h"
 #include "heltec.h"
 #include <string.h>
+#define uS_TO_S_FACTOR 1000000
 
 const char* ssid     = "iPhone13mini";
 const char* password = "kobas123";
@@ -21,8 +22,17 @@ const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600;
 const int   daylightOffset_sec = 3600;
 
-void setup(){
+// Variables for an alarm time
+int hrs_a;
+int min_a;
+int sec_a;
+char alarm_time[15];
+int time_to_wake;
+
+void setup() {
   Serial.begin(115200);
+
+  Serial.println("Good morning gorgeous!");
 
   // Connect to Wi-Fi
   Serial.print("Connecting to ");
@@ -36,32 +46,84 @@ void setup(){
   Serial.println("WiFi connected.");
 
   // Init and OLED
-  Heltec.begin(true,false,false);
-  Heltec.display->flipScreenVertically();
+  Heltec.begin(true, false, false);
   Heltec.display->setFont(ArialMT_Plain_10);
+
+  // Set up an alarm time
+  Serial.println("Enter the time to wake up!");
+
+  Serial.println("Hours : ");
+  while (Serial.available() == 0) {}
+  hrs_a = Serial.parseInt();
+  Serial.read();
+
+  Serial.println("Minutes : ");
+  while (Serial.available() == 0) {}
+  min_a = Serial.parseInt();
+  Serial.read();
   
+  Serial.println("Seconds: ");
+  while (Serial.available() == 0) {}
+  sec_a = Serial.parseInt();
+  Serial.read();
+  
+  sprintf(alarm_time, "%02d:%02d:%02d", hrs_a, min_a, sec_a);
+  Serial.println("Alarm time: ");
+  Serial.println(alarm_time);
+  Serial.println("Good night Irene!");
+
   // Init and get the time
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   printLocalTime();
 
+  time_to_wake = calculateWakeUp();
+  Serial.println("Alarm should go of in : " + String(time_to_wake) + " seconds!");
+  //Serial.print("Alarm should go of in :");
+  //Serial.print(time_to_wake);
+  //Serial.println(" seconds.")
+  
+  esp_sleep_enable_timer_wakeup(time_to_wake * uS_TO_S_FACTOR);
+
   //disconnect WiFi as it's no longer needed
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
+
+  esp_deep_sleep_start(); // Enter deep sleep
 }
 
-void loop(){
+
+// Loop block will never be reached in this regime? 
+void loop() {
+  Serial.println("Hi im in loop block, good morning!");
   delay(1000);
   printLocalTime();
 }
 
-void printLocalTime(){
+int calculateWakeUp()
+{
   struct tm timeinfo;
-  if(!getLocalTime(&timeinfo)){
+  if (!getLocalTime(&timeinfo)) 
+  {
+    Serial.println("Failed to obtain time");
+    return -1;
+  }
+
+  int curr_time_secs = timeinfo.tm_hour * 3600 + timeinfo.tm_min * 60 + timeinfo.tm_sec;
+  int alarm_time_secs = hrs_a * 3600 + min_a * 60 + sec_a;
+  return alarm_time_secs - curr_time_secs;
+}
+
+void printLocalTime() 
+{
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) 
+  {
     Serial.println("Failed to obtain time");
     return;
   }
-  
+
   Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  /*
   Serial.print("Day of week: ");
   Serial.println(&timeinfo, "%A");
   Serial.print("Month: ");
@@ -81,25 +143,26 @@ void printLocalTime(){
 
   Serial.println("Time variables");
   char timeHour[3];
-  strftime(timeHour,3, "%H", &timeinfo);
+  strftime(timeHour, 3, "%H", &timeinfo);
   Serial.println(timeHour);
   char timeWeekDay[10];
-  strftime(timeWeekDay,10, "%A", &timeinfo);
+  strftime(timeWeekDay, 10, "%A", &timeinfo);
   Serial.println(timeWeekDay);
 
+  */
   char curr_time[9];
   sprintf(curr_time, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
   Heltec.display->clear();
   Heltec.display->setFont(ArialMT_Plain_10);
   Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
-  Heltec.display->drawStringMaxWidth(0,0,128,curr_time);
+  Heltec.display->drawStringMaxWidth(0, 0, 128, curr_time);
   Heltec.display->display();
 
   time_t now;
   time(&now);
-  Serial.print("UNIX TS: ");
-  Serial.println(now);
-  
+  //Serial.print("UNIX TS: ");
+  //Serial.println(now);
+
   Serial.println();
 }
