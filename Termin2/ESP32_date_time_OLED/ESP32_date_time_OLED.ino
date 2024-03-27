@@ -7,16 +7,20 @@
 
   The above copyright notice and this permission notice shall be included in all
   copies or substantial portions of the Software.
+
+  Modified on : 27.3.2023. by Petar Stamenkovic
+  This code syncs live time for NTP server and lets user set an alarm time. ESP then goes to deep sleep in order to save energy and wakes up at the time user set.
 */
 
 #include <WiFi.h>
 #include "time.h"
 #include "heltec.h"
 #include <string.h>
-#define uS_TO_S_FACTOR 1000000
+#define uS_TO_S_FACTOR 1000000 // Converting factor us to s
 
-const char* ssid     = "iPhone13mini";
-const char* password = "kobas123";
+// Your wifi information
+const char* ssid     = "********";
+const char* password = "********";
 
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600;
@@ -55,7 +59,7 @@ void setup() {
   Serial.println("Hours : ");
   while (Serial.available() == 0) {}
   hrs_a = Serial.parseInt();
-  Serial.read();
+  Serial.read();  // Serial.read in these statments is used to consume the newline character so you can input multiple data(h,m,s)
 
   Serial.println("Minutes : ");
   while (Serial.available() == 0) {}
@@ -67,7 +71,7 @@ void setup() {
   sec_a = Serial.parseInt();
   Serial.read();
   
-  sprintf(alarm_time, "%02d:%02d:%02d", hrs_a, min_a, sec_a);
+  sprintf(alarm_time, "%02d:%02d:%02d", hrs_a, min_a, sec_a); // Convert the alarm info into string for better printing manipulation
   Serial.println("Alarm time: ");
   Serial.println(alarm_time);
   Serial.println("Good night Irene!");
@@ -76,13 +80,10 @@ void setup() {
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   printLocalTime();
 
-  time_to_wake = calculateWakeUp();
+  time_to_wake = calculateWakeUp();   // Calculate the amount of time for ESP to wake up, see function below
   Serial.println("Alarm should go of in : " + String(time_to_wake) + " seconds!");
-  //Serial.print("Alarm should go of in :");
-  //Serial.print(time_to_wake);
-  //Serial.println(" seconds.")
   
-  esp_sleep_enable_timer_wakeup(time_to_wake * uS_TO_S_FACTOR);
+  esp_sleep_enable_timer_wakeup(time_to_wake * uS_TO_S_FACTOR); // Configure the wakeup reason - timer
 
   //disconnect WiFi as it's no longer needed
   WiFi.disconnect(true);
@@ -92,13 +93,15 @@ void setup() {
 }
 
 
-// Loop block will never be reached in this regime? 
+// Loop block will never be reached in this regime so its not neccesary
 void loop() {
   Serial.println("Hi im in loop block, good morning!");
   delay(1000);
   printLocalTime();
 }
 
+// Function that calculates the amount of time for ESP to sleep, fetch the current time from NTP server and subtract it from an alarm time you set
+// Convert both in seconds since the wake up function requires time in seconds
 int calculateWakeUp()
 {
   struct tm timeinfo;
@@ -113,6 +116,7 @@ int calculateWakeUp()
   return alarm_time_secs - curr_time_secs;
 }
 
+// Function that prints local tie from NTP server, uncomment statments below for additional time information
 void printLocalTime() 
 {
   struct tm timeinfo;

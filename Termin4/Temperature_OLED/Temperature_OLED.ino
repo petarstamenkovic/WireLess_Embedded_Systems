@@ -2,6 +2,9 @@
    BasicHTTPClient.ino
 
     Created on: 24.05.2015
+    Modified on : 27.3.2023. by Petar Stamenkovic 
+    This code switches beetwen todays and tommorows forecast by pressing a PRD button on a LoRa board(LoRa 32 Heltec V2) using a 
+    openweather API -> https://openweathermap.org/
 
 */
 
@@ -74,16 +77,17 @@ void setup() {
     delay(1000);
   }
 
+  // OLED screen init
   Heltec.begin(true, false, true);
   Heltec.display -> setFont(ArialMT_Plain_10);
 
-  wifiMulti.addAP("iPhone13mini", "kobas123"); // Define parameters for access network
+  // Define your network SSID and PASSWORD
+  wifiMulti.addAP("******", "*******");
 
 }
 
 void loop() {
   // wait for WiFi connection
-
   if ((wifiMulti.run() == WL_CONNECTED)) {
 
     HTTPClient http;
@@ -95,13 +99,14 @@ void loop() {
       Serial.printf("[HTTP] GET... code: %d\n", httpCode);
       if (httpCode == HTTP_CODE_OK)
       {
-        String payload = http.getString(); // Sadrzaj jsona se nalazi tren u pyaloadu
+        String payload = http.getString(); // Load JSON information in a String object payload
         char json[1024];
-        payload.toCharArray(json, payload.length() + 1); // String objekat u niz charova; +1 zbog terminacije stringa(iza poslednjeg korisnog karaktera imamo null terminator)
-        DynamicJsonDocument doc(1024); // Json document
-        deserializeJson(doc, json); // FJA za deserijalizaciju
+        payload.toCharArray(json, payload.length() + 1); // Convert a string object into a char array, +1 is for the final, null terminator
+        DynamicJsonDocument doc(1024); // Create a dynamic JSON document
+        deserializeJson(doc, json); // Function that deserializes a JSON into a doc
 
-        // Korisne informacije za nas i njihov uspis u string
+        // Extracting usefull information for us and converting them into a strings in order to print them on OLED Display,here is shown only min,max temp and humidity
+        // but you can add any from JSON doc the same way i did here.
         float max_temp = doc["main"]["temp_max"];
         float min_temp = doc["main"]["temp_min"];
         int humidity = doc["main"]["humidity"];
@@ -109,17 +114,17 @@ void loop() {
         sprintf(min_temp_s, "%.2f", min_temp);;
         sprintf(humidity_s, "%d", humidity);
 
-        // Spajanje poruke i ekstrahovanog podatka
+        // Tried this, not compatible because of the loop nature, strings keep on concatinating every iteration!
         //strcat(message_max, max_temp_s);
         //strcat(message_min, min_temp_s);
         //strcat(message_hum, humidity_s);
 
-        // Ispis na konzolu
+        // Serial monitor print just to see if information is valid, this is optional
         Serial.println(max_temp);
         Serial.println(min_temp);
         Serial.println(humidity);
 
-        // Ispis na OLED display
+        // Display information on OLED display
         Heltec.display->clear();
         Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
         Heltec.display->drawString(0, 0, "Todays forecast");
@@ -134,10 +139,11 @@ void loop() {
       Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
     }
     http.end();
-    while (digitalRead(0)); // Wait for a PRD button press
-    ///////// CODE FOR A TOMMOROWS FORECAST /////////////
+    while (digitalRead(0)); // Wait for a PRD button press and move on with code
+    ///////// CODE FOR A TOMMOROWS FORECAST ///////////// 
+    // This code is almost similar to the previous block - changed the http link mostly // 
     Serial.print("[HTTP begin : Fetching info for tommorows forecast...\n]");
-    http.begin("https://api.openweathermap.org/data/2.5/forecast?q=Novi%20Sad&appid=c5d32a3622a064c913548125fb9f6cc5&units=metric"); // Link for a tommrows forecast
+    http.begin("https://api.openweathermap.org/data/2.5/forecast?q=Novi%20Sad&appid=c5d32a3622a064c913548125fb9f6cc5&units=metric&cnt=9"); // Link for a tommrows forecast
     Serial.print("[HTTP] GET...\n");
     httpCode = http.GET();
     if (httpCode > 0) {
@@ -145,38 +151,38 @@ void loop() {
       if (httpCode == HTTP_CODE_OK)
       {
         //Serial.println("Code is OK so im in the if Statment");
-        String payload_t = http.getString(); // Sadrzaj jsona se nalazi tren u pyaloadu
+        String payload_t = http.getString(); 
         //Serial.println(payload_t);
-        char json_t[1024];                       // CEO JSON DOKUMENT IMA 27k karaktera!
-        payload_t.toCharArray(json_t, 1023 + 1); // ? 1024 karaktera je dovoljno samo za jedan element liste iz jsona a meni treba 8. indeks iz iste za sutrasnji dan, kako to kad bi mi onda trebalo tipa char[10k]
+        char json_t[4200];                       // Caution here, initial JSON doc from this link is huge(around 27k chars), we just fetch first 4200 because its enough.
+        payload_t.toCharArray(json_t, 4199 + 1); // Load only 4200 chars, if you encounter some issues, reduce the size of this, or pay for a better API DOC on this link : https://openweathermap.org/forecast16
         //Serial.println(json_t);
-        DynamicJsonDocument doc_t(1024); // Json document
-        deserializeJson(doc_t, json_t); // FJA za deserijalizaciju
+        DynamicJsonDocument doc_t(1024);
+        deserializeJson(doc_t, json_t);
 
-        // Ekstrakcija podataka iz json dokumenta - 9ti element liste je sutrasnji dan u 9 - Zbog dileme sa memorijom stoji indeks 0, tolko moze da se ucita
-        String date_t = doc_t["list"][0]["dt_txt"];
-        date_t.toCharArray(date_t_s, 10 + 1); // Skrati date format, ne treba nam vreme
-        float max_temp_t = doc_t["list"][0]["main"]["temp_max"];
-        float min_temp_t = doc_t["list"][0]["main"]["temp_min"];
-        int humidity_t = doc_t["list"][0]["main"]["humidity"];
+        // Exctracting information from JSON, this one is "multi-level" so we access it differently. Index 8 is for tommorows forecast at 9AM
+        String date_t = doc_t["list"][8]["dt_txt"];
+        date_t.toCharArray(date_t_s, 10 + 1); // Fetch only first 10 chars from date (mm.dd.yyyy hh.mm --> mm.dd.yyyy)
+        float max_temp_t = doc_t["list"][8]["main"]["temp_max"];
+        float min_temp_t = doc_t["list"][8]["main"]["temp_min"];
+        int humidity_t = doc_t["list"][8]["main"]["humidity"];
         sprintf(max_temp_s, "%.2f", max_temp_t);
         sprintf(min_temp_s, "%.2f", min_temp_t);
         sprintf(humidity_s, "%d", humidity_t);
 
-        // Spajanje poruke i ekstrahovanog podatka - Ne radi jer ovaj kod ide u loop i konstantno nalepljuje nove info
+        // Same issue as mentioned up
         //strcat(message_date_t, date_t_s);
         //strcat(message_max_t, max_temp_s);
         //strcat(message_min_t, min_temp_s);
         //strcat(message_hum_t, humidity_s);
 
-        // Ispis na konzolu
+        // Console printing
         Serial.println(date_t);
         Serial.println(date_t_s);
         Serial.println(max_temp_t);
         Serial.println(min_temp_t);
         Serial.println(humidity_t);
 
-        // Ispis na OLED
+        // Display info on OLED
         Heltec.display->clear();
         Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
         Heltec.display->drawString(0, 0, message_date_t); Heltec.display->drawString(30, 0, date_t_s);
@@ -191,9 +197,7 @@ void loop() {
       Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
     }
     http.end();
-    while (digitalRead(0)); // Nakon pritisnutog tastera PRD - kad nije pritisnut onda je 1
+    while (digitalRead(0)); // Wait for a button press and after it clear the OLED as you go in another iteration
     Heltec.display->clear();
   }
-
-  //delay(5000); // Ponovo preuzimanje stranice nakon 5sekundi
 }
