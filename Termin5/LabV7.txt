@@ -1,0 +1,25 @@
+UES laboratorijske vezbe termin 7 				Datum : 5.4.2024.
+
+Tema : ESP32 kao web-client : prosledjivanje podataka cloud aplikaciji
+
+Cloud   - Prihvatanje, skladistenje podataka(recimo u bazu) i obrada istih.
+ 
+Postman - Klijentska aplikacija koja koristi one 4 metode, za testiranje API-a
+ 	- WebAplikacija ili bas aplikacija (exe)
+
+Kreiraj novi workspace i otvori novi overview. Kopiraj url sa prethodnih vezbi
+definisi metodu (GET) -> Request se salje i dobija se json dole.
+
+ThingSpeak : preko uns maila (ee18)
+Koncept kanala preko kojig stizu podaci
+New Channel 
+	name ***
+	field -> imena polja 	(temp,pritisak,vlaznost) -> Save channel
+
+Slanje podataka na cloud aplikaciju prkeo API (API keys)
+	- write i read key gledaj API requests 
+
+API req link ide u postmana, otvori params, podesi field1 na neku vrednost i send (gledaj kanal)
+Citanje pomocu 3 linka - results = 2 broj rezultata u responsu
+
+Dodavanje widgetsa .. Private View - Add Widgets - Gauge (Range je za boju opsega)
