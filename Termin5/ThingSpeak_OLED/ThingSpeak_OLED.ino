@@ -20,7 +20,6 @@
 int cnt = 0;
 float sin_val;
 char sin_dot[10];
-
 WiFiMulti wifiMulti;
 
 /*
@@ -87,8 +86,9 @@ void loop() {
   if ((wifiMulti.run() == WL_CONNECTED)) {
 
     HTTPClient http;
+    String url = "https://api.thingspeak.com/update?api_key=OQZ630VVYOKMIZ41&field1=" + String(sin_val);
     Serial.print("[HTTP] begin : Uploading sin function values to ThinkSpeak server...\n");
-    http.begin("https://api.thingspeak.com/update?api_key=OQZ630VVYOKMIZ41&field1=sin_val"); // Link for a current forecast, create same block just for tommorows forecast
+    http.begin(url);
     Serial.print("[HTTP] GET...\n");
     int httpCode = http.GET();
     if (httpCode > 0) {
