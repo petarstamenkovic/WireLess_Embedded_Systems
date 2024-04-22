@@ -1,0 +1,41 @@
+UES Termin 6 : 19.4.2024.
+
+Tema : Node-RED i MQTT protokol(Publish-Subscribe arhitektura)
+
+* Node-RED
+	- Vizuelni alat za kreiranja toka podataka, kreiranje nodova i
+	  medjusobno povezivanje
+	- Moguce kreiranje GUI (kreiranje neke vrste dashboarda)
+	- Potreban server sa javnom adresom (Ubuntu masina u datacentru)
+		(pristup preko ssh)
+	
+	IP adresa : 45.76.87.164 (Tu je instaliran webserver(apache 2))
+	Domen 	  : ues.edu.rs
+	- Svako kreira svoj tok!
+	http://45.76.87.164:1880	[Kucaj u browseru za pristup Node-RED]
+
+Desni klik - Add Flow 
+-Inject - Ispali podatke(npr String) u neki tok
+	- Promeni timestamp i string 
+
+-Debug  - Omogucava da vidimo sto smo poslali
+	- Povezi ova dva
+
+-Sa desne strane ima debug messages -> Dashboard (layout organizovan u tabovima)
+	- Kreiraj tab i kreiraj grupu(Klizac i skazaljka) i grupu(Grafik) 
+	- Elementi iz dashboard menija levo - Slider(generise podatke) + gauge(skazaljka) -> povezi ih medjusobno + chart(grafik) 
+		- Slider ide u prvu grupu, oznaku daj kao klizac,min,max,step(0.1), grafik ide u drugu grupu(hours->1 minutes)
+		- Skazaljka sve po defaultu
+		- I chart povezi sa klizacem
+		- Deploy -> desno ikonica dijagonalno gore strlica -> da se prikaze dashboard
+		- Ovo moze da se poveze sa raznim mreznim entitetima
+	
+** MQTT protokol
+
+- Centralni entiter je broker(kod nas mosquitto) - softver koji se izvrsaba na serveru i prima
+  poruke od klijenata(publishera) koji to salju u odredjene topice(uz podteme).
+
+- QoS - Quality of service(0,1,2)
+- Poruke mogu biti retained ili ne(ako nije retained, poruka ide samo trenutnim subscriberima)
+
+Mqtt out - 1883 nama bas treba 
