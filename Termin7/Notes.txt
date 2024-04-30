@@ -1,0 +1,91 @@
+UES Lab - Termin 7 		Datum : 26.4.2024.
+
+Tema : Front end 
+
+
+Mi radimo zakup masine u Frankfurtu koja radi na Ubuntu i ima staticku IP adresu.
+Domen : ues.edu.rs
+
+Softverski paket : L A M P 
+
+FireWall : Ogranicava saobracaj ka masini, filtracija internet saobracaja recimo po IP adresama, portovima(blok), 
+	   Dozvoljavamo sledece portove : 
+	   * Port 22 - SSH klijentska aplikacija (Recimo Putty)
+	   * Port 1880 - NODERed
+	   * Port 1883 - MQTT
+
+* Gde se nalazi nas repozitorijum? 
+	- /var/www/htlm/stamenkovic.e111/(ovde sad treba kreirati neke HTML fajlove i tako prikazivati neke stranice)
+
+*znacenjeimena.com
+
+* BITWISE client
+	Host - ues.edu.rs (ili IP adresa -> 45.76.87.164)
+	Port - 22 
+	Username - Nas user(stamenkovic.e111)
+	Initial method - Password(e.T8%>;") , store enc , kucaj pass 
+	Log IN 
+	Open in terminal
+	nano index.html
+
+* Kad se napise html u browseru pisi 
+	https://ues.edu.rs/stamenkovic.e111/index.html
+
+* Reference za HTML 
+	https://www.w3schools.com/html/default.asp
+
+* Primer 2 : AJAX - Parsiranje sadrzaja iz JSON-a
+	* "..." default sadrzaj
+	* Ovde je javascript embedovan unutar html
+	* Analiza js coda : 
+		- xhttp je callback fja i proverava da li je response odgovarajuc(status je 200?)
+		- console.log - Korisno za debagovanje koda (Konzola je na inspect baru)
+		- responseText tretira jsona kao teksutalni sadrzaj -> js objekat u variabli obj
+		- document.getElementById - nalazi html element sa ovim id = obj[setup] zamena sa json podatkom
+		- xttp.open("HTTP_METHOD","URL",true)
+		
+* Primer 3 : Prognoza 
+	- Pisemo odvojeno html,js
+
+<html>
+
+<head>
+        <title>Vremenska prognoza</title>
+</head>
+
+
+<body>
+        <h1>Meteoroloska prognoza</h1>
+        <form>
+                <label for ="lokacija">Unesite lokaciju:</label><br>
+                <input type ="text" id = "lokacija" name ="lokacija"><br>
+                <input type ="submit" value ="Submit">
+        </form>
+
+        <table>
+                <tr>
+                        <td>Lokacija</td>
+                        <td>...</td>
+                </tr>
+
+                <tr>
+                        <td>Temperatura</td>
+                        <td>...</td>
+                </tr>
+
+                <tr>
+                        <td>Vlaznost vazduha</td>
+                        <td>...</td>
+                </tr>
+
+                <tr>
+                        <td>Vazdusni pritisak</td>
+                        <td>...</td>
+                </tr>
+        </table>
+
+        <img src="" alt ="Ide slicia">
+        <p>... </p>
+</body>
+
+</html>
