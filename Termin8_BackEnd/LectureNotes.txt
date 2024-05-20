@@ -1,0 +1,78 @@
+UES LAB 8 
+TOPIC : BACK-END I BAZE PODATAKA
+==========================================
+
+* Potrebne 4 komponente na serverskoj strani L(Linux). A(Apache). M(MySql). P(PHP).
+* Pristup php adminu preko: ues.edu.rs/phpmyadmin - Loguj se sa svojim podacima
+* Naziv moje baze je ime_brindexa -> db_stamenkovic_e111
+* Podaci se smestaju u tabele, gde svaka ima svoje kolone i vrste.
+	- CRDU model (Create, Read, Update, Delete) pomocu SQL komandi
+
+* SELECT * - selektuje sva polja u tabeli
+
+------------------------
+
+Primer 2. 
+
+Not NULL - NE moze biti prazno a ne nula
+
+PHP kod mora da bude ugradjen u HTTP endpoint! Preko http protokola saljemo podatke na server koji to krcka 
+i salje u bazu podataka. Uloguj se na server -> SFTP -> Napravi php fajl
+
+PHP - OOp paragdigma c-olike sintakse
+	echo - tekstualni ispis
+
+*PHP Kod ignorise koja metoda mu je stigla od strane klijentske aplikacije i tu je potrebno reci sta se desava 
+pri kojoj metodi
+
+AKTIVACIJA ENDPOINTA
+1) Preko URl - https://ues.edu.rs/stamenkovic.e111/sensor.php
+
+IDEMO U POSTMANA
+- On ima POST metodu sto mi zelimo da uradimo u ovom primeru. Iz postmana kao klijentske aplikacije 
+  saljemo nesto.(POST metoda)
+
+==================================================================================================================
+
+<?php
+	$_POST = file_get_contents("php://input"); // cita fajl php input i sta god je klijent poslao smesta u ovu prom
+	echo "Klijent je poslao: " . $_POST // Tacka je simbol konkatencije	
+?>	
+
+
+==================================================================================================================
+
+
+<?php
+	$_POST = file_get_contents("php://input");
+	$json_obj = json_decode($_POST);
+	$server = "localhost"; // Lokal host pristup bazi
+	$user = "stamenkovic.e111";
+	$pass = "e.T8%>;\"";	// Sifra se zavrsava sa " pa sam morao da ga escapujem sa \
+	
+	$db = "db_stamenkovic_e111";
+	
+	$conn = new mysqli($server, $user, $pass, $db);
+	
+	if ($conn->connect_error)
+		die("Connection failed: " . $conn->connect_error); // Terminacija za ispadanje iz skripte
+	
+	// Formiranje SQL Komande
+	$sql = "INSERT INTO merenja (tip_senzora, vrednost) VALUES ('" . $json_obj->tip_senzora . "', " . $json_obj->vrednost .")";
+	
+	// Provera uspesnosti SQL komande
+	if ($conn->query($sql) === TRUE)
+		echo "Unos uspesno izvrsen!" . PHP_EOL;
+	else
+		echo "Greska: " . $sql . $conn->error . PHP_EOL;
+	
+	// Conn se zatvara kao i konekcija ka bazi
+	$conn->close();
+?>
+
+
+==================================================================================================================
+
+
+$row = $result->fetch_assoc() - Iteracija po vrstama promenljive result
+Simbol tacka je znak za konkatenaciju

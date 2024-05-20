@@ -89,3 +89,28 @@ FireWall : Ogranicava saobracaj ka masini, filtracija internet saobracaja recimo
 </body>
 
 </html>
+
+========================================================================================================
+
+Lab 7(Part 2) 	Date : 30.4.2024.
+
+SFTP window - Transfer fajlova i editovanje
+Desni klik na nas fajl koji zelimo da editujemo - Edit i biramo text editor koji zelimo(ako ne zelimo nano)
+
+CSS Pravila - Ovaj fajl moze biti ili embedovan ili moze biti eksterni fajl
+Desni klik na bitvise sftp - create file - prognoza.css
+
+CSS PRAVILA 
+1. html - se odnosi na sve elemente htmla
+2. table , td,th(table data , table header) 
+3. tr(table row)tr:nth-child(even)(pravila za parne vrste)
+	- #dddddd - hexa prikaz - 3 bajta - 8 bita za svaku boju
+
+3.5. dodaj <br> kao break da odvojis slicicu i tabelu (ovo radis u html fajlu)
+
+DINAMIKA ELEMENATA - JAVASCRIPT
+
+Div element skriva sve dok to nije potrebno
+<script>document.getElementById("vremenski_podaci").style.display = "none" </script> 
+ovo se automatski poziva kada se html prikaze i sluzi za prikaz dokumenata
+
