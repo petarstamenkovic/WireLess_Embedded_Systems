@@ -1,0 +1,83 @@
+UES - Termin 9 						Date : 24.5.2024.
+
+===================================================================================
+Topic : LoRaWAN 
+===================================================================================
+
+
+-----------------------------------------------------------------------------------
+Koncept LoRaWAN 
+-----------------------------------------------------------------------------------
+
+* LoRaWAN pripada MAC sloju. Node salje poruku GateWayu i dalje prosledjuju poruku ka serverima.
+* DevAddr - Dinamicka adresa koja se dodeljuje od strane mreze prilikom aktivacije.
+	  - 7 je fiksni prefiks(ID mreze) a ostalih 25 se dodeljuju uredjaju
+* AppKey - Master kljuc(Pre-shared key - PSK) ima ga mreza.
+
+
+-----------------------------------------------------------------------------------
+OpenSource mreza koju koristimo - TTN 
+-----------------------------------------------------------------------------------
+
+Nakon logovanja idemo u konzolu, EUROPE 1 Dublin Ireland.
+Create application 
+ID - moja-app
+NAME - MojaAplikacija
+
+Zatim ide Register End Device -> Enter the device spec
+	* Freq plan - SPF9 for RX2
+	* Version - 1.0.2.
+	* Regional param - revision B
+	* Join EUI(AppEUI) - bilo sta
+	* DevEUI - Generate 
+	* AppKey(Master) - generate
+	-> Register End device - Ovime smo registrovali nas uredjaj na TTN mrezu, sada sledi firmware na nasem uredjaju
+
+* 'Gola' LoRa omogucava p2p komunikaciju a uz LoRaWAN omogucava i kom sa gateway
+
+-----------------------------------------------------------------------------------
+Firmware 
+-----------------------------------------------------------------------------------
+
+* Otvori Example ka lmic-> OTAA.in
+	- APPEUI - pretvori u c-ovski niz sa <> i copy paste (LSB)
+	- DEVEUI - pretvori u c-ovski niz, idi u lsb i copy paste (LSB)
+	- APPKEY - pretvori u c-ovski niz, copy paste(MSB)
+
+* Zameni EV_TXComplete kodom sa slajda 12
+
+Spusti na plocu :D 
+Received ack - Poruka je stigla 
+
+Poruke se dekoduju - Payload formatters 
+Uplink 
+Custom js formatter - Kopiraj kod sa slajda 11 -> Save changes -> Pogledaj live data sad
+
+------------- 	-----------------	----------------------	--------------
+* Kako se salje downlink poruka? Stize u jedan od dva predefinisana prozora
+
+Messaging - Downlink 
+	  - Replace downlink queue (sve brise ako su bile neke) 
+	  - Payload BE EF F0 0D - schedule 
+
+----------------------------------------------------------------------------------
+Kreiranje HTTP end pointa koji prima ove poruke
+----------------------------------------------------------------------------------
+
+PhpMyAdmin log in 
+Napravi novi tabelu ttn_log
+
+Integrations - Povezivanje aplikacije sa razlicitim spoljasnjim servisima - Webhooks(HTTP integracija)
+	- Custom webhook 
+		- BaseURL : https://ues.edu.rs/stamenkovic.e111
+		- Enabled uplink message /ttn.php -> Add hook
+
+
+
+
+
+
+
+
+
+
