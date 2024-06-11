@@ -1,0 +1,29 @@
+UES LAB 10 			DATE : 31.5.2024.
+
+Topic : NB-IoT
+
+Novi hardver VIP - Ovo podrzava NB-IoT koji se zasniva na cellualar mrezama(mobilna telefonija), mali deo
+		   ovog spektra se koristi iz NB-IoT komunikaciju.
+
+Coverage extenision leveli 0,1,2 (gledaj prezentaciju Telekoma)
+	- NE DIZI SNAGU EMITOVANJA UREDJAJA(ne sme i trosi energiju), domet se dize repetitivnim slanjem paketa.
+
+
+Potrebno je posebno okruzenje: ATMEL Koji je pravio ovo je kupljen od MICROCHIPA - ciji se studio koristi za ovu plocicu.
+
+SAM-BA - Pomocna app koja sluzi za komunikaciju sa bootloaderom na ploci. 
+	 Bootloader je app koja ima mogucnost da upisuje sadrzaj u memoriju u kojoj se i ona sama nalazi. Ovo ima i 
+	 Arduino.
+
+Bootloaderski rezim nam sluzi samo za programiranje ploce, u njegov rezim se ulazi kada drzimo desni klik i dok 
+ga drzimo pritisnemo RST taster. U obican rezim se vracamo, pritiskom na RST.
+
+Dva rezima aplikacije : - Bootloaderski (Desni taster na plocici - prebacivanje u booloaderski)
+			- Izvrsavanje korisnicke aplikacije
+
+Nas bootloader prihvata .bin file (on se dobija Buildovanjem koda - ctlr + F7)
+
+Tools - External tools
+
+Project -> Configure Atmel
+
